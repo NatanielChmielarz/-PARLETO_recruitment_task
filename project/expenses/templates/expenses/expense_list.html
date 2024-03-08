@@ -5,9 +5,19 @@
 <a href="{% url 'expenses:expense-create' %}">add</a>
 
 <form method="get" action="">
-  {{form.as_p}}
+   {% comment %} <label for='name'>Enter the name </label>
+  <input type="text" name='name' placeholder='name'>
+  <label for='date'>Enter the start date </label>
+  <input type="date" name='date'>
+  <label for='end_date'>Enter the end date </label>
+  <input type="date" name='end_date'>
+  <select id="category_list" name="category_list" multiple>
+    {% for category in category_list %}
+    <option value="{{ category.id }}">{{ category.name }}</option>
+    {% endfor %}
+</select> {% endcomment %}
+	{{form.as_table }}
   <button type="submit">search</button>
-</form>
 <br>
 <table border="1">
 	<caption>Expenses</caption>
