@@ -7,6 +7,7 @@
 	<thead>
 		<tr>
 			<th>name</th>
+			<th>expenses_cout</th>
 			<th>actions</th>
 		</tr>
 	</thead>
@@ -17,7 +18,13 @@
 				{{obj.name}}
 			</td>
 			<td>
+				{% comment %} do poprawy {% endcomment %}
+                {{category_expense_counts }}
+				
+            </td>
+			<td>
 				<a href="{% url 'expenses:category-delete' obj.id %}">delete</a>
+				<a href="{% url 'expenses:category-edit' obj.id %}">edit</a>
 			</td>
 		</tr>
 		{% endfor %}

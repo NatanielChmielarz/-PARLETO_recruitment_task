@@ -11,16 +11,26 @@ def get_years_list():
     return years_list
 class ExpenseSearchForm(forms.Form):
     name = forms.CharField(required=False)
-    date = forms.DateField(widget=forms.SelectDateWidget(years=get_years_list()))
-    end_date = forms.DateField(widget=forms.SelectDateWidget(years=get_years_list()))
+    # date = forms.DateField(widget=forms.SelectDateWidget(years=get_years_list()))
+    # end_date = forms.DateField(widget=forms.SelectDateWidget(years=get_years_list()))
+    date = forms.DateField(widget=forms.DateInput())
+    end_date = forms.DateField(widget=forms.DateInput())
     category_list = forms.MultipleChoiceField(
         choices=get_category_list(),
         widget=forms.CheckboxSelectMultiple(),
     )
-
+    sort_by = forms.ChoiceField(choices=(
+        ('category_asc', 'Category (Ascending)'),
+        ('category_desc', 'Category (Descending)'),
+        ('date_asc', 'Date (Ascending)'),
+        ('date_desc', 'Date (Descending)'),
+    ), required=False)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].required = False
         self.fields['date'].required = False
         self.fields['end_date'].required = False
         self.fields['category_list'].required = False
+        self.fields['sort_by'].required = False
+        
+        
