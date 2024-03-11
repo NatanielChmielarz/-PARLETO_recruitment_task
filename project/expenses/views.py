@@ -19,24 +19,9 @@ class ExpenseListView(ListView):
             name = form.cleaned_data.get('name', '').strip()
             start_date = form.cleaned_data.get('start_date')
             end_date = form.cleaned_data.get('end_date')
+            print(start_date)
+            print(end_date)
             categories = form.cleaned_data.get('category_list', [])
-
-            if start_date and end_date:
-                queryset = queryset.filter(date__range=[start_date, end_date])
-            if start_date:
-                if start_date and end_date:
-                    queryset = queryset.filter(date__range=[start_date, end_date])
-                else:    
-                    queryset = queryset.filter(date__range=[start_date,datetime.datetime.now()])
-            if end_date:
-                if start_date and end_date:
-                    queryset = queryset.filter(date__range=[start_date, end_date])
-                else:
-                    queryset = queryset.filter(date__range=["2000-01-01", end_date])
-            if categories:
-                queryset = queryset.filter(category__in=categories)
-            if name:
-                queryset = queryset.filter(name__icontains=name)
             sort_by = form.cleaned_data.get('sort_by')
             if sort_by == 'category_asc':
                 queryset = queryset.order_by('category__name')
@@ -46,18 +31,36 @@ class ExpenseListView(ListView):
                 queryset = queryset.order_by('date')
             elif sort_by == 'date_desc':
                 queryset = queryset.order_by('-date')
+                
+                
+            if start_date and end_date:
+            # Filtrowanie w zakresie daty, jeśli oba daty są dostępne
+                queryset = queryset.filter(date__range=[start_date, end_date])
+            elif start_date:
+                # Filtrowanie od początku zakresu do obecnej daty, jeśli dostępna jest tylko data początkowa
+                queryset = queryset.filter(date__range=[start_date, datetime.datetime.now()])
+            elif end_date:
+                # Filtrowanie od daty początkowej (2000-01-01) do końcowej daty, jeśli dostępna jest tylko data końcowa
+                queryset = queryset.filter(date__range=["2000-01-01", end_date])
+                    
+            if categories:
+                queryset = queryset.filter(category__in=categories)
+            if name:
+                queryset = queryset.filter(name__icontains=name)
+            
         return queryset
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         form = ExpenseSearchForm(self.request.GET)
         queryset = self.get_queryset()
-        summart_copy  = self.get_queryset() 
+        all_expenses = Expense.objects.all()  # Get all expenses
+    
         context['form'] = form
         context['summary_per_category'] = summary_per_category(queryset)
         context['total_spent'] = self.get_queryset().aggregate(total_spent=Sum('amount'))['total_spent'] or 0
         
-        summary_per_year_month = summart_copy.annotate(
+        summary_per_year_month = all_expenses.annotate(
             year=ExtractYear('date'),
             month=ExtractMonth('date')
         ).values('year', 'month').annotate(
@@ -68,14 +71,9 @@ class ExpenseListView(ListView):
         return context
         
 
-    def clean(self):
-        cleaned_data = super().clean()
-        start_date = cleaned_data.get('start_date')
-        end_date = cleaned_data.get('end_date')
-        if end_date and start_date and end_date < start_date:
-            raise ValidationError(('End date must be greater than or equal to start date.'))
+    
         
-        
+      
 class CategoryListView(ListView):
     model = Category
     paginate_by = 5

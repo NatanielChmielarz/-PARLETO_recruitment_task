@@ -3,11 +3,129 @@
 {% block content %}
 
 <a href="{% url 'expenses:expense-create' %}">add</a>
-
+<style>
+	.main_table {
+		margin-top: 20px;
+	}
+	
+	.main_table table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	
+	.main_table caption {
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	
+	.main_table th,
+	.main_table td {
+		padding: 8px;
+		border: 1px solid #ccc;
+		text-align: center;
+	}
+	
+	.main_table th {
+		background-color: #f2f2f2;
+	}
+	
+	.main_table tbody tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+	
+	.main_table a {
+		text-decoration: none;
+		color: #007bff;
+		margin-right: 5px;
+	}
+	
+	.main_table a:hover {
+		text-decoration: underline;
+	}
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+	
+	.actions label {
+		font-weight: bold;
+	}
+	
+	.actions input[type="text"],
+	.actions select {
+		width: 200px;
+		padding: 5px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+	}
+	
+	.actions #id_category_list {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	
+	.actions #id_category_list label {
+		margin-right: 10px;
+	}
+	
+	.actions #id_category_list input[type="checkbox"] {
+		margin-right: 5px;
+	}
+	
+	.actions button[type="submit"] {
+		padding: 8px 15px;
+		background-color: #007bff;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+	
+	.actions button[type="submit"]:hover {
+		background-color: #0056b3;
+	}
+	.SumaryTables {
+		margin-top: 20px 0px;
+	}
+	
+	.SumaryTables hr {
+		border: 1px solid #ccc;
+		margin-bottom: 20px;
+	}
+	
+	.SumaryTables table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 20px;
+	}
+	
+	.SumaryTables table caption {
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	
+	.SumaryTables table th,
+	.SumaryTables table td {
+		padding: 8px;
+		border: 1px solid #ccc;
+	}
+	
+	.SumaryTables table th {
+		background-color: #f2f2f2;
+	}
+	
+	.SumaryTables table tbody tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+</style>
 <form method="get" action="" for="ExpenseSearchForm">
+	<div class="actions">
 	{{form.as_table }}
+	</div>
   <button type="submit">search</button>
 <br>
+<div class="main_table">
 <table border="1">
 	<caption>Expenses</caption>
 	<thead>
@@ -41,8 +159,9 @@
 	{% endfor %}
 	</tbody>
 </table>
-
+<div>
 {% include "_pagination.html" %}
+<div class="SumaryTables">
 <hr>
 <table border="1">
   <caption>Summary per category</caption>
@@ -84,4 +203,4 @@
     </tbody>
   </table>
 {% endblock %}
-
+<div>

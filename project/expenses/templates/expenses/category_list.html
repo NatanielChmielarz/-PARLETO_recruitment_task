@@ -1,8 +1,48 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style> 
+	.main_table {
+		margin-top: 20px;
+	}
+	
+	.main_table table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	
+	.main_table caption {
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	
+	.main_table th,
+	.main_table td {
+		padding: 8px;
+		border: 1px solid #ccc;
+		text-align: center;
+	}
+	
+	.main_table th {
+		background-color: #f2f2f2;
+	}
+	
+	.main_table tbody tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+	
+	.main_table a {
+		text-decoration: none;
+		color: #007bff;
+		margin-right: 5px;
+	}
+	
+	.main_table a:hover {
+		text-decoration: underline;
+	}
+</style>
 <a href="{% url 'expenses:category-create' %}">add</a>
-
+<div class="main_table">
 <table border="1">
     <thead>
         <tr>
@@ -25,4 +65,4 @@
     </tbody>
 </table>
 {% endblock %}
-
+<div>
