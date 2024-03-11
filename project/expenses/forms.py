@@ -20,10 +20,12 @@ class ExpenseSearchForm(forms.Form):
         widget=forms.CheckboxSelectMultiple(),
     )
     sort_by = forms.ChoiceField(choices=(
+        ('','No sorting'),
         ('category_asc', 'Category (Ascending)'),
         ('category_desc', 'Category (Descending)'),
         ('date_asc', 'Date (Ascending)'),
         ('date_desc', 'Date (Descending)'),
+        
     ), required=False)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

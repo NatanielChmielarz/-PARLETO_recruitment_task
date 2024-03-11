@@ -1,3 +1,4 @@
+import datetime
 from django.forms import ValidationError
 from django.views.generic.list import ListView
 from django.db.models import Sum
@@ -20,10 +21,18 @@ class ExpenseListView(ListView):
             end_date = form.cleaned_data.get('end_date')
             categories = form.cleaned_data.get('category_list', [])
 
+            if start_date and end_date:
+                queryset = queryset.filter(date__range=[start_date, end_date])
             if start_date:
-                queryset = queryset.filter(date__gte=start_date)
+                if start_date and end_date:
+                    queryset = queryset.filter(date__range=[start_date, end_date])
+                else:    
+                    queryset = queryset.filter(date__range=[start_date,datetime.datetime.now()])
             if end_date:
-                queryset = queryset.filter(date__lte=end_date)
+                if start_date and end_date:
+                    queryset = queryset.filter(date__range=[start_date, end_date])
+                else:
+                    queryset = queryset.filter(date__range=["2000-01-01", end_date])
             if categories:
                 queryset = queryset.filter(category__in=categories)
             if name:
@@ -43,11 +52,12 @@ class ExpenseListView(ListView):
         context = super().get_context_data(**kwargs)
         form = ExpenseSearchForm(self.request.GET)
         queryset = self.get_queryset()
+        summart_copy  = self.get_queryset() 
         context['form'] = form
         context['summary_per_category'] = summary_per_category(queryset)
         context['total_spent'] = self.get_queryset().aggregate(total_spent=Sum('amount'))['total_spent'] or 0
         
-        summary_per_year_month = queryset.annotate(
+        summary_per_year_month = summart_copy.annotate(
             year=ExtractYear('date'),
             month=ExtractMonth('date')
         ).values('year', 'month').annotate(
@@ -64,6 +74,8 @@ class ExpenseListView(ListView):
         end_date = cleaned_data.get('end_date')
         if end_date and start_date and end_date < start_date:
             raise ValidationError(('End date must be greater than or equal to start date.'))
+        
+        
 class CategoryListView(ListView):
     model = Category
     paginate_by = 5
@@ -80,9 +92,10 @@ class CategoryListView(ListView):
 
         category_expense_counts = {}
         for category in categories:
-            category_expense_counts[category.id] = category.expense_set.count()
+            category_expense_counts[category.name] = category.expense_set.count()
 
-        context['category_expense_counts'] = category_expense_counts
+        
+        context['category_data'] = [(category, category_expense_counts.get(category.name, "Brak danych")) for category in categories]
         return context
     
 
